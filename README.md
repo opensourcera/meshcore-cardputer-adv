@@ -1,7 +1,7 @@
 ## MeshCore Cardputer-Adv + Cap LoRa-1262 variant, with a font size setting and a signal tester
 
 This is a fork of [MultiMote/meshcore-cardputer-adv](https://github.com/MultiMote/meshcore-cardputer-adv)
-that adds two things: **Settings > Font size** and **Tools > Signal tester**. The original firmware draws
+that adds a few things: **Settings > Font size** (and Sans/Mono), **Tools > Signal tester** and a **"heard you" reply** key. The original firmware draws
 everything in a 12 px font, which is hard to read on the Cardputer's small screen. This fork keeps everything else
 as it is (phone pairing over Bluetooth, SD card history, GPS, keyboard layouts), lets you pick a bigger font on the
 device itself, and lets you measure the link to a repeater without a phone or PC.
@@ -49,6 +49,21 @@ ratio of each one. Handy when you place an antenna or want to know whether a dis
 
 A reply needs every hop to work in both directions, so "no reply" on a path that you *can* hear means the other
 side does not hear you, or does not relay.
+
+### "Heard you" reply
+
+When someone on a channel asks whether they got through, press `Ctrl+Space` in that chat. The message box is filled
+with a reply to the last message heard there, for example:
+
+```
+@[KJ4HUM] heard you: 2 hops, SNR 7.5 dB, RSSI -98 dBm
+```
+
+Edit it if you like, then `Enter` sends it. `Ctrl+Backspace` clears the message box. In a direct chat the reply
+has no name prefix. The hop count is the number of repeaters the message came through; "direct" means none.
+
+Because `Ctrl+Space` is taken in chats, the keyboard layout switch is `Ctrl+L` there (`Ctrl+Space` still works on
+the other pages).
 
 ### Installing this fork
 
@@ -140,6 +155,7 @@ Currently implemented (companion):
    * After sending direct message, "Message delivered" appears (if ACK received)
    * Retry direct message sending if ACK is not received
    * Press `Ctrl+Up` to insert last sent message into the text field
+   * Press `Ctrl+Space` to fill in a "heard you" reply (hops, SNR, RSSI), `Ctrl+Backspace` to clear the text field
    * Press `Ctrl+T` to break resending
 
 - Chat history
@@ -163,7 +179,7 @@ Currently implemented (companion):
 - Keyboard layouts
 
    * Enabled if `/meshcore_custom/keyboard_alt.txt` file is present on SD card
-   * Switch with Ctrl+Space
+   * Switch with Ctrl+Space (Ctrl+L in a chat)
    * Create own layout with [Layout Editor](https://github.com/MultiMote/cardputer-adv-layout-editor).
    * Up to 3 byte character replacement (UTF-8)
    * Ready to use: [keyboard_layouts](keyboard_layouts)

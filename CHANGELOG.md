@@ -1,3 +1,9 @@
+# 2026.10.22.2 (opensourcera fork)
+
+* Chat: `Ctrl+Space` fills the message box with a "heard you" reply to the last message received in that chat
+  (hops, SNR, RSSI; `@[name]` prefix on channels). `Ctrl+Backspace` clears the message box.
+* Keyboard layout switch is `Ctrl+L` in a chat (`Ctrl+Space` elsewhere, as before).
+
 # 2026.10.22.1 (opensourcera fork)
 
 * Settings > Font: Sans or Mono (DejaVu Sans Mono at 12, 14, 16 and 18 px). `Enter` toggles and saves.

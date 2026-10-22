@@ -132,6 +132,35 @@ void ChatPage::sendChatMessage() {
   }
 }
 
+// Ctrl+Space: put a reply to the last message heard in this chat into the message box (hops, SNR, RSSI)
+void ChatPage::fillHeardReply() {
+  HeardInfo h;
+  bool found = false;
+  if (current_contact_idx != -1 && current_contact.type == ADV_TYPE_CHAT) {
+    found = the_mesh_cp.getLastHeard(current_contact.id.pub_key, false, h);
+  } else if (current_channel_idx != -1) {
+    found = the_mesh_cp.getLastHeard(current_channel.channel.secret, true, h);
+  }
+  if (!found) {
+    _p->getUiTask()->showAlert("Nothing heard here yet", 2000);
+    return;
+  }
+
+  char hops[24];
+  if (h.hops == 0) {
+    snprintf(hops, sizeof(hops), "direct");
+  } else {
+    snprintf(hops, sizeof(hops), "%d hop%s", h.hops, h.hops == 1 ? "" : "s");
+  }
+  char buf[MAX_MESSAGE_LENGTH];
+  if (h.is_channel) {
+    snprintf(buf, sizeof(buf), "@[%s] heard you: %s, SNR %.1f dB, RSSI %.0f dBm", h.sender, hops, h.snr, h.rssi);
+  } else {
+    snprintf(buf, sizeof(buf), "heard you: %s, SNR %.1f dB, RSSI %.0f dBm", hops, h.snr, h.rssi);
+  }
+  chat_text_box = buf;
+}
+
 bool ChatPage::handleInput(Keyboard::Event &e) {
   CardputerLayout *lay = _p->getUiTask()->getBoard()->getLayout();
 
@@ -141,6 +170,16 @@ bool ChatPage::handleInput(Keyboard::Event &e) {
   }
 
   if (the_mesh_cp.isMessageSending()) {
+    return true;
+  }
+
+  if (e.modifiers.ctrl && e.key == Keyboard::KEY_SPACE) {
+    fillHeardReply();
+    return true;
+  }
+
+  if (e.modifiers.ctrl && e.key == Keyboard::KEY_BACKSPACE) {
+    chat_text_box.clear();
     return true;
   }
 

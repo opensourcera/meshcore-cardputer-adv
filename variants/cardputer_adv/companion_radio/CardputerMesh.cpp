@@ -67,6 +67,7 @@ mesh::DispatcherAction CardputerMesh::onRecvPacket(mesh::Packet *pkt) {
 void CardputerMesh::onChannelMessageRecv(const mesh::GroupChannel &channel, mesh::Packet *pkt,
                                          uint32_t timestamp, const char *text) {
   MyMesh::onChannelMessageRecv(channel, pkt, timestamp, text);
+  logHeard(channel.secret, true, pkt, text);
   _store->storeMessage(channel.secret, text, false, true);
   _ui->onChannelMessageRecv(channel, text);
 }
@@ -74,6 +75,7 @@ void CardputerMesh::onChannelMessageRecv(const mesh::GroupChannel &channel, mesh
 void CardputerMesh::onMessageRecv(const ContactInfo &from, mesh::Packet *pkt, uint32_t sender_timestamp,
                                   const char *text) {
   MyMesh::onMessageRecv(from, pkt, sender_timestamp, text);
+  logHeard(from.id.pub_key, false, pkt, from.name);
 
   _store->storeMessage(from.id.pub_key, text, false, false);
   _ui->onContactMessageRecv(from, text);
@@ -124,6 +126,36 @@ int CardputerMesh::sendDirectMessage(const ContactInfo &recipient, uint32_t time
 void CardputerMesh::logRxRaw(float snr, float rssi, const uint8_t raw[], int len) {
   MyMesh::logRxRaw(snr, rssi, raw, len);
   rx_packet_count++;
+  last_rx_rssi = rssi;
+}
+
+void CardputerMesh::logHeard(const uint8_t *key, bool is_channel, mesh::Packet *pkt, const char *sender) {
+  HeardInfo *h = &heard_log[heard_log_next];
+  heard_log_next = (heard_log_next + 1) % HEARD_LOG_SIZE;
+  memcpy(h->key, key, sizeof(h->key));
+  h->is_channel = is_channel;
+  h->valid = true;
+  h->hops = pkt->getPathHashCount();
+  h->snr = pkt->getSNR();
+  h->rssi = last_rx_rssi;
+  // channel text is "Name: message"; keep the name only
+  int n = 0;
+  while (sender[n] && n < (int)sizeof(h->sender) - 1 && !(is_channel && sender[n] == ':' && sender[n + 1] == ' ')) {
+    h->sender[n] = sender[n];
+    n++;
+  }
+  h->sender[n] = 0;
+}
+
+bool CardputerMesh::getLastHeard(const uint8_t *key, bool is_channel, HeardInfo &out) {
+  for (int i = 1; i <= HEARD_LOG_SIZE; i++) {
+    HeardInfo *h = &heard_log[(heard_log_next + HEARD_LOG_SIZE - i) % HEARD_LOG_SIZE];
+    if (h->valid && h->is_channel == is_channel && memcmp(h->key, key, sizeof(h->key)) == 0) {
+      out = *h;
+      return true;
+    }
+  }
+  return false;
 }
 
 ContactInfo *CardputerMesh::processAck(const uint8_t *data) {

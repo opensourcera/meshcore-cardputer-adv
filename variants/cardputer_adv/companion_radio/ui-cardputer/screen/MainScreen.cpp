@@ -184,7 +184,10 @@ void MainScreen::onMessageSendAttempt(uint8_t attempt, uint8_t total, MessageSen
 void MainScreen::poll() {}
 
 bool MainScreen::handleInput(Keyboard::Event &e) {
-  if (e.modifiers.ctrl && e.key == Keyboard::KEY_SPACE) {
+  // Ctrl+Space switches the keyboard layout, except in a chat where it fills in the "heard you" reply;
+  // Ctrl+L switches the layout everywhere
+  bool in_chat = (current_page == MainScreenPage::CHAT);
+  if (e.modifiers.ctrl && ((e.key == Keyboard::KEY_SPACE && !in_chat) || e.key == Keyboard::KEY_L)) {
     _task->getBoard()->getLayout()->switchLayout();
     return true;
   }
