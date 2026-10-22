@@ -61,6 +61,10 @@ public:
   inline uint16_t getBattMilliVoltsCorrected() { return (float)getBattMilliVolts() * _custom_prefs->battery_correction; }
   void toggleBuzzer();
   void togglePowerSave();
+  /** Switch the display font without saving (live preview) */
+  void applyFontSize(uint8_t idx);
+  /** Switch the display font and save it */
+  void setFontSize(uint8_t idx);
   bool getGPSState();
   void toggleGPS();
   inline unsigned long getAutoOffTime() const { return auto_off_time; }

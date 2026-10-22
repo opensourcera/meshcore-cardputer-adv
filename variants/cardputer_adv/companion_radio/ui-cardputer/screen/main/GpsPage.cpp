@@ -4,7 +4,7 @@ int GpsPage::render(CardputerDisplay &lcd) {
 #if ENV_INCLUDE_GPS == 1
   LocationProvider *nmea = sensors.getLocationProvider();
   char buf[50];
-  int y = 18;
+  int y = UI_PAGE_TOP - 2;
   bool gps_state = _p->getUiTask()->getGPSState();
   strcpy(buf, gps_state ? "gps on" : "gps off");
   lcd.drawTextLeftAlign(0, y, buf);

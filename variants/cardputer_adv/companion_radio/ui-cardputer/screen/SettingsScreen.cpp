@@ -72,6 +72,10 @@ void SettingsScreen::renderItem(CardputerDisplay &lcd, SettingsItem item, int x,
       snprintf(tmp, sizeof(tmp), "Battery correction: %.3f", _custom_prefs->battery_correction);
       break;
 
+    case SettingsItem::DeviceFontSize:
+      snprintf(tmp, sizeof(tmp), "Font size: %d", CardputerDisplay::fontPixels(_custom_prefs->font_size));
+      break;
+
     case SettingsItem::MeshPathSize:
       snprintf(tmp, sizeof(tmp), "Path hash size: %d", _node_prefs->path_hash_mode + 1);
       break;
@@ -124,6 +128,11 @@ bool SettingsScreen::enterItemEdit(SettingsItem item) {
       is_editing = true;
       return true;
 
+    case SettingsItem::DeviceFontSize:
+      edit_u8 = _custom_prefs->font_size;
+      is_editing = true;
+      return true;
+
     case SettingsItem::RadioSf:
       edit_u8 = _node_prefs->sf;
       is_editing = true;
@@ -172,6 +181,9 @@ bool SettingsScreen::enterItemEdit(SettingsItem item) {
 }
 
 void SettingsScreen::cancelItemEdit(SettingsItem item) {
+  if (item == SettingsItem::DeviceFontSize) {
+    _task->applyFontSize(_custom_prefs->font_size); // undo the live preview
+  }
   is_editing = false;
 }
 
@@ -224,6 +236,10 @@ bool SettingsScreen::commitItemEdit(SettingsItem item) {
     case SettingsItem::MeshPathSize:
       _node_prefs->path_hash_mode = edit_u8 - 1;
       the_mesh_cp.savePrefs();
+      return true;
+
+    case SettingsItem::DeviceFontSize:
+      _task->setFontSize(edit_u8);
       return true;
 
     case SettingsItem::RadioFreq:
@@ -293,6 +309,15 @@ void SettingsScreen::handleEditInput(SettingsItem item, Keyboard::Event &e) {
       } else if (e.key == Keyboard::ARROW_RIGHT && edit_u8 < 3) {
         edit_u8++;
       }
+      break;
+
+    case SettingsItem::DeviceFontSize:
+      if (e.key == Keyboard::ARROW_LEFT && edit_u8 > 0) {
+        edit_u8--;
+      } else if (e.key == Keyboard::ARROW_RIGHT && edit_u8 < CardputerDisplay::FONT_COUNT - 1) {
+        edit_u8++;
+      }
+      _task->applyFontSize(edit_u8); // live preview
       break;
 
     case SettingsItem::RadioFreq:
@@ -392,11 +417,11 @@ int SettingsScreen::render(CardputerDisplay &display) {
       break;
     }
 
-    renderItem(display, static_cast<SettingsItem>(real_idx), 15, 20 + i * UI_TEXT_LINE_HEIGHT);
+    renderItem(display, static_cast<SettingsItem>(real_idx), 15, UI_MENU_TOP + i * UI_TEXT_LINE_HEIGHT);
 
     if (i == list_idx) {
       display.setColor(CardputerDisplay::P_GREEN);
-      display.drawTextLeftAlign(5, 20 + i * UI_TEXT_LINE_HEIGHT, ">");
+      display.drawTextLeftAlign(5, UI_MENU_TOP + i * UI_TEXT_LINE_HEIGHT, ">");
     }
   }
 
@@ -410,6 +435,10 @@ int SettingsScreen::render(CardputerDisplay &display) {
     display.setTextSize(2);
 
     switch (menu_index) {
+      case SettingsItem::DeviceFontSize:
+        sprintf(buf, "- %d +", CardputerDisplay::fontPixels(edit_u8));
+        display.drawTextCentered(display.width() / 2, display.height() / 2 - 8, buf);
+        break;
       case SettingsItem::RadioSf:
       case SettingsItem::RadioCr:
       case SettingsItem::RadioPwr:

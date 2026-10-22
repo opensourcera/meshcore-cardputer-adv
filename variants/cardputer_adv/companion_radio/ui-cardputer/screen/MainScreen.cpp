@@ -50,10 +50,12 @@ void MainScreen::renderStatusIcons(CardputerDisplay &lcd) {
   int fillWidth = (batteryPercentage * (iconWidth - 4)) / 100;
   lcd.fillRect(iconX + 2, iconY + 2, fillWidth, iconHeight - 4);
 
-  sprintf(tmp, "%d", batteryPercentage);
-  lcd.drawTextCentered(iconX + 2 + iconWidth / 2, 0, tmp);
-  lcd.setColor(CardputerDisplay::P_BLACK);
-  lcd.drawTextCentered(iconX + 2 + iconWidth / 2 - 1, 0, tmp);
+  if (UI_TEXT_LINE_HEIGHT <= 14) { // the percentage only fits inside the icon with the smaller fonts
+    sprintf(tmp, "%d", batteryPercentage);
+    lcd.drawTextCentered(iconX + 2 + iconWidth / 2, 0, tmp);
+    lcd.setColor(CardputerDisplay::P_BLACK);
+    lcd.drawTextCentered(iconX + 2 + iconWidth / 2 - 1, 0, tmp);
+  }
 
   iconX = 3;
   iconY = 5;
@@ -94,7 +96,7 @@ int MainScreen::render(CardputerDisplay &lcd) {
   lcd.setColor(CardputerDisplay::P_GREEN);
 
   // curr page indicator
-  int y = 16;
+  int y = UI_TEXT_LINE_HEIGHT + 4;
   int x = lcd.width() / 2 - 5 * (MainScreenPage::Count - 1);
   for (uint8_t i = 0; i < MainScreenPage::Count; i++, x += 10) {
     if (i == current_page) {

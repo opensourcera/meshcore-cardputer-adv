@@ -1,4 +1,42 @@
-## MeshCore Cardputer-Adv + Cap LoRa-1262 variant
+## MeshCore Cardputer-Adv + Cap LoRa-1262 variant, with a font size setting
+
+This is a fork of [MultiMote/meshcore-cardputer-adv](https://github.com/MultiMote/meshcore-cardputer-adv)
+that adds one thing: **Settings > Font size**. The original firmware draws everything in a 12 px font, which is
+hard to read on the Cardputer's small screen. This fork keeps everything else as it is (phone pairing over
+Bluetooth, SD card history, GPS, keyboard layouts) and lets you pick a bigger font on the device itself.
+
+![font sizes](images/font_sizes_preview.png)
+
+*Rendered preview of the chat page at each size (a drawing, not a photo of the device).*
+
+### Font size
+
+- Press `OPT` on the main screen, go to **Font size** under DEVICE and press `Enter`.
+- `Left` / `Right` switch between **12** (original), **14**, **16** and **18** px. The screen redraws at once so you can judge it.
+- `Enter` saves the choice, `Esc` goes back to the previous size.
+- The whole interface follows the font: menus, contact and channel lists, chat history and the message line.
+  Bigger text means fewer rows on screen. At 18 px the chat shows two messages plus the input line, at 16 px three.
+- The setting is stored with the other custom settings on the SD card (`/meshcore_custom/prefs`), so it survives
+  firmware updates. A settings file written by the original firmware is read as it is; the font simply starts at 12 px.
+
+All four fonts are DejaVu Sans with the same character set as the original (Latin, Latin-1, Latin Extended-A,
+Cyrillic, currency symbols, arrows). They are generated from the DejaVu TTF with `tools/make_vlw_font.py` and
+compiled into the firmware, which grows by about 320 KB.
+
+### Installing this fork
+
+1. Download the `-merged.bin` file from the [Releases](https://github.com/opensourcera/meshcore-cardputer-adv/releases) page.
+2. Flash it at address `0x0` with https://meshcore.io/flasher or esptool:
+
+   ```bash
+   esptool --chip esp32s3 --port COMx write-flash 0x0 cardputer_adv_companion_radio_ble-<version>-merged.bin
+   ```
+
+3. Your node identity, contacts, channels and chat history live on the SD card and are kept.
+
+Everything below is the original project's README.
+
+---
 
 ![photo](images/logo.jpg)
 
@@ -34,7 +72,7 @@ platformio run --target upload --environment cardputer_adv_companion_radio_ble
 
 ### Flashing pre-build binaries
 
-1. Grab .bin file from [Releases](https://github.com/MultiMote/meshcore-cardputer-adv/releases) page. The "merged" firmware will not erase your settings because they are stored on the SD card.
+1. Grab .bin file from [Releases](https://github.com/opensourcera/meshcore-cardputer-adv/releases) page (this fork) or the [upstream releases](https://github.com/MultiMote/meshcore-cardputer-adv/releases). The "merged" firmware will not erase your settings because they are stored on the SD card.
 2. Flash with https://meshcore.io/flasher or with any other ESP32S3 flaser.
 
 ### State
@@ -85,7 +123,7 @@ Currently implemented (companion):
 - Unread counter
    * On main screen
    * Near contact/channel
-- Basic display unicode support. Font is `DejaVu Sans 12` converted with `Processing 4` to vlw format.
+- Basic display unicode support. Font is `DejaVu Sans`, 12 px converted with `Processing 4` to vlw format; 14, 16 and 18 px generated with `tools/make_vlw_font.py` (this fork).
 
   Included unicode blocks:
    * Basic Latin (U+0000-U+007F)

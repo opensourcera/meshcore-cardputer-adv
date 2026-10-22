@@ -23,6 +23,7 @@ private:
   bool _isOn = false;
   uint16_t _lastColor = 0;
   int16_t _fontYAdvance = 1;
+  uint8_t _font_idx = 0;
   LGFX LCD;
 
   void updateFontYAdvance();
@@ -42,6 +43,14 @@ public:
   CardputerDisplay() : DisplayDriver(240, 135) {}
   bool begin();
   void tryLoadUserFont();
+
+  /** Built-in font sizes selectable in Settings */
+  static const uint8_t FONT_COUNT = 4;
+  static uint8_t fontPixels(uint8_t idx);
+  bool setFontSize(uint8_t idx);
+  uint8_t getFontSize() const { return _font_idx; }
+  /** Row pitch used by lists and menus for the current font */
+  int16_t getUiLineHeight() const;
 
   bool isOn() override { return _isOn; };
   void turnOn() override;

@@ -44,7 +44,7 @@ bool ContactsPage::getFilteredContactIndex(int list_idx, int &real_idx) {
 
 int ContactsPage::render(CardputerDisplay &lcd) {
   lcd.setColor(CardputerDisplay::P_GREEN);
-  lcd.drawTextCentered(lcd.width() / 2, 20, "Contacts");
+  lcd.drawTextCentered(lcd.width() / 2, UI_PAGE_TOP, "Contacts");
   int real_idx = 0;
   int list_page = contact_list_idx / UI_CONTACT_LIST_SIZE;
   int list_idx = contact_list_idx % UI_CONTACT_LIST_SIZE;
@@ -73,7 +73,7 @@ int ContactsPage::render(CardputerDisplay &lcd) {
     }
 
     if (i == list_idx) {
-      lcd.drawTextLeftAlign(5, 30 + i * UI_TEXT_LINE_HEIGHT, ">");
+      lcd.drawTextLeftAlign(5, UI_LIST_TOP + i * UI_TEXT_LINE_HEIGHT, ">");
     }
 
     int right_pad = 0;
@@ -82,14 +82,14 @@ int ContactsPage::render(CardputerDisplay &lcd) {
       snprintf(buf, sizeof(buf), "%d", unread_count);
       right_pad = lcd.getTextWidth(buf) + 5;
       lcd.setColor(CardputerDisplay::P_ORANGE);
-      lcd.drawTextRightAlign(lcd.width() - 1, 30 + i * UI_TEXT_LINE_HEIGHT, buf);
+      lcd.drawTextRightAlign(lcd.width() - 1, UI_LIST_TOP + i * UI_TEXT_LINE_HEIGHT, buf);
     }
 
     if (contact.type == ADV_TYPE_CHAT) {
-      lcd.drawTextLeftAlign(15, 30 + i * UI_TEXT_LINE_HEIGHT, "C");
+      lcd.drawTextLeftAlign(15, UI_LIST_TOP + i * UI_TEXT_LINE_HEIGHT, "C");
     }
 
-    lcd.drawTextEllipsized(25, 30 + i * UI_TEXT_LINE_HEIGHT, lcd.width() - 25 - right_pad, contact.name);
+    lcd.drawTextEllipsized(25, UI_LIST_TOP + i * UI_TEXT_LINE_HEIGHT, lcd.width() - 25 - right_pad, contact.name);
   }
 
   lcd.drawRect(1, lcd.height() - UI_TEXT_LINE_HEIGHT - 4, lcd.width() - 1, 1);

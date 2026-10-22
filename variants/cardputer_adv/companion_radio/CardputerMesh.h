@@ -17,7 +17,7 @@ class CardputerMesh : public MyMesh {
   uint32_t last_discover_tag = 0;
   uint8_t last_message_hash[MAX_HASH_SIZE] = { 0 };
   uint16_t last_message_heard_repeats = 0;
-  CustomNodePrefs _custom_prefs{ .power_save = 0, .battery_correction = 1.0f };
+  CustomNodePrefs _custom_prefs{ .power_save = 0, .battery_correction = 1.0f, .font_size = 0 };
   LastSentMessage last_msg;
   unsigned long resend_timeout = 0;
 

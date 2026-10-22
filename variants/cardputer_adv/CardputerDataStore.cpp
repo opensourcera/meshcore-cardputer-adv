@@ -26,9 +26,10 @@ void CardputerDataStore::loadCustomPrefs(CustomNodePrefs &prefs) {
 
   File file = _fs->open(CUSTOM_PREFS_FILE, FILE_READ);
 
-  // Read file only if it exactly matches struct size, otherwise keep default values
-  if (file.size() == sizeof(prefs)) {
-    file.read((uint8_t *)&prefs, sizeof(prefs));
+  // Fields are only ever appended, so an older (shorter) file is read as far as it goes and the rest keeps defaults
+  size_t n = file.size();
+  if (n >= 5 && n <= sizeof(prefs)) {
+    file.read((uint8_t *)&prefs, n);
   }
 
   file.close();

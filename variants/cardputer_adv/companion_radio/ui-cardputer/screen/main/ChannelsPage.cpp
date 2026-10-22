@@ -16,7 +16,7 @@ int ChannelsPage::getChannelCount() { // not sure if there is no gaps
 
 int ChannelsPage::render(CardputerDisplay &lcd) {
   lcd.setColor(CardputerDisplay::P_GREEN);
-  lcd.drawTextCentered(lcd.width() / 2, 20, "Channels");
+  lcd.drawTextCentered(lcd.width() / 2, UI_PAGE_TOP, "Channels");
 
   int real_idx = 0;
   int list_page = channel_list_idx / UI_CHANNEL_LIST_SIZE;
@@ -44,7 +44,7 @@ int ChannelsPage::render(CardputerDisplay &lcd) {
     }
 
     if (i == list_idx) {
-      lcd.drawTextLeftAlign(5, 30 + i * UI_TEXT_LINE_HEIGHT, ">");
+      lcd.drawTextLeftAlign(5, UI_LIST_TOP + i * UI_TEXT_LINE_HEIGHT, ">");
     }
 
     int right_pad = 0;
@@ -53,10 +53,10 @@ int ChannelsPage::render(CardputerDisplay &lcd) {
       snprintf(buf, sizeof(buf), "%d", unread_count);
       right_pad = lcd.getTextWidth(buf) + 5;
       lcd.setColor(CardputerDisplay::P_ORANGE);
-      lcd.drawTextRightAlign(lcd.width() - 1, 30 + i * UI_TEXT_LINE_HEIGHT, buf);
+      lcd.drawTextRightAlign(lcd.width() - 1, UI_LIST_TOP + i * UI_TEXT_LINE_HEIGHT, buf);
     }
 
-    lcd.drawTextEllipsized(25, 30 + i * UI_TEXT_LINE_HEIGHT, lcd.width() - 25 - right_pad, channel.name);
+    lcd.drawTextEllipsized(25, UI_LIST_TOP + i * UI_TEXT_LINE_HEIGHT, lcd.width() - 25 - right_pad, channel.name);
   }
 
   return 5000;

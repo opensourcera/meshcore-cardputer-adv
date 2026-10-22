@@ -21,11 +21,11 @@ int ToolsScreen::render(CardputerDisplay &lcd) {
 
       const char *label = menu_item_labels[real_idx];
       lcd.setColor(label[0] == '-' ? CardputerDisplay::P_GREEN : CardputerDisplay::P_YELLOW);
-      lcd.drawTextLeftAlign(15, 20 + i * UI_TEXT_LINE_HEIGHT, label);
+      lcd.drawTextLeftAlign(15, UI_MENU_TOP + i * UI_TEXT_LINE_HEIGHT, label);
 
       if (i == list_idx) {
         lcd.setColor(CardputerDisplay::P_GREEN);
-        lcd.drawTextLeftAlign(5, 20 + i * UI_TEXT_LINE_HEIGHT, ">");
+        lcd.drawTextLeftAlign(5, UI_MENU_TOP + i * UI_TEXT_LINE_HEIGHT, ">");
       }
     }
   } else if (page == ToolsPage::DiscoverPage) {
@@ -35,7 +35,7 @@ int ToolsScreen::render(CardputerDisplay &lcd) {
       DiscoveredRepeater *rep = &discovered_repeaters[i];
 
       lcd.setColor(CardputerDisplay::P_YELLOW);
-      lcd.drawTextLeftAlign(0, 25 + i * UI_TEXT_LINE_HEIGHT, rep->name);
+      lcd.drawTextLeftAlign(0, (UI_MENU_TOP + 5) + i * UI_TEXT_LINE_HEIGHT, rep->name);
 
       if (rep->snr > 0) {
         lcd.setColor(CardputerDisplay::P_GREEN);
@@ -44,7 +44,7 @@ int ToolsScreen::render(CardputerDisplay &lcd) {
       }
 
       sprintf(buf, "%.2fdb", rep->snr);
-      lcd.drawTextRightAlign(lcd.width() - 2, 25 + i * UI_TEXT_LINE_HEIGHT, buf);
+      lcd.drawTextRightAlign(lcd.width() - 2, (UI_MENU_TOP + 5) + i * UI_TEXT_LINE_HEIGHT, buf);
     }
 
     return 1000;

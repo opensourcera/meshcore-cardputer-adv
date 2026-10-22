@@ -16,14 +16,20 @@
 #define BATT_MIN_MILLIVOLTS                      3350 // From M5Unified
 #define BATT_MAX_MILLIVOLTS                      4150 // From M5Unified
 
-#define UI_TEXT_LINE_HEIGHT                      12 // adjust to the used font todo: replace to display.getFontLineHeight
+// Layout follows the selected font (Settings > Font size). Values below equal the original fixed layout at 12 px.
+#define UI_TEXT_LINE_HEIGHT                      (display.getUiLineHeight())
+#define UI_PAGE_TOP                              (UI_TEXT_LINE_HEIGHT + 8)                   // first row below the status bar
+#define UI_LIST_TOP                              (UI_PAGE_TOP + UI_TEXT_LINE_HEIGHT - 2)      // first list row below a page title
+#define UI_MENU_TOP                              (UI_TEXT_LINE_HEIGHT + 8)                   // first row below a screen title at y=5
+#define UI_LIST_ROWS(top, bottom_reserved)       ((display.height() - (bottom_reserved) - (top)) / UI_TEXT_LINE_HEIGHT)
 #define UI_RECENT_LIST_SIZE                      4
-#define UI_CONTACT_LIST_SIZE                     7
-#define UI_CHANNEL_LIST_SIZE                     8
+#define UI_CONTACT_LIST_SIZE                     UI_LIST_ROWS(UI_LIST_TOP, UI_TEXT_LINE_HEIGHT + 4)
+#define UI_CHANNEL_LIST_SIZE                     UI_LIST_ROWS(UI_LIST_TOP, 0)
 #define UI_CHANNEL_SEARCH_MAX_CHARS              32
-#define UI_SETTINGS_LIST_SIZE                    9
-#define UI_CHAT_HISTORY_LIST_SIZE                5
-#define UI_TOOLS_LIST_SIZE                       9
+#define UI_SETTINGS_LIST_SIZE                    UI_LIST_ROWS(UI_MENU_TOP, 0)
+#define UI_CHAT_HISTORY_TOP                      (UI_LIST_TOP + 5)
+#define UI_CHAT_HISTORY_LIST_SIZE                ((display.height() - UI_TEXT_LINE_HEIGHT - 4 - UI_CHAT_HISTORY_TOP) / display.getFontLineHeight())
+#define UI_TOOLS_LIST_SIZE                       UI_LIST_ROWS(UI_MENU_TOP, 0)
 
 #define AUTO_OFF_MILLIS                          15000 // 15 seconds
 

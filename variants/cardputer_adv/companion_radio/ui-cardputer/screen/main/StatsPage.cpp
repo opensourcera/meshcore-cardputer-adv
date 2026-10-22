@@ -3,8 +3,12 @@
 int StatsPage::render(CardputerDisplay &lcd) {
   char tmp[80];
 
-  int y = 20;
-  display.drawTextCentered(display.width() / 2, y, "Stats");
+  int y = UI_PAGE_TOP;
+  if (UI_TEXT_LINE_HEIGHT <= 14) {
+    display.drawTextCentered(display.width() / 2, y, "Stats");
+  } else {
+    y -= UI_TEXT_LINE_HEIGHT; // no room for a title with a large font; the page dots show where we are
+  }
 
   display.setColor(CardputerDisplay::P_YELLOW);
 

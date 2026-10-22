@@ -7,12 +7,12 @@ int RecentAdvertsPage::render(CardputerDisplay &lcd) {
   the_mesh_cp.getRecentlyHeard(recent, UI_RECENT_LIST_SIZE);
   lcd.setColor(CardputerDisplay::P_GREEN);
 
-  int y = 20;
+  int y = UI_PAGE_TOP;
   lcd.drawTextCentered(lcd.width() / 2, y, "Recent adverts");
 
   y += UI_TEXT_LINE_HEIGHT;
 
-  for (int i = 0; i < UI_RECENT_LIST_SIZE; i++, y += UI_TEXT_LINE_HEIGHT) {
+  for (int i = 0; i < UI_RECENT_LIST_SIZE && y + UI_TEXT_LINE_HEIGHT <= lcd.height(); i++, y += UI_TEXT_LINE_HEIGHT) {
     auto a = &recent[i];
     if (a->name[0] == 0) continue; // empty slot
     int secs = _rtc->getCurrentTime() - a->recv_timestamp;

@@ -1,3 +1,11 @@
+# 2026.10.21 (opensourcera fork)
+
+* Settings > Font size: 12 (original), 14, 16 or 18 px. Live preview while choosing, `Enter` saves, `Esc` reverts.
+* Menus, lists, chat history and the message line follow the selected font; row counts adapt to the screen.
+* Custom settings file: an older, shorter file is now read as far as it goes instead of being ignored, so settings
+  survive the new field.
+* Fonts generated from DejaVu Sans with `tools/make_vlw_font.py`.
+
 # 2026.10.1
 
 * Fix contact hop count display.

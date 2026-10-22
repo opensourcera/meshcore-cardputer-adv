@@ -9,7 +9,7 @@ int ChatPage::render(CardputerDisplay &lcd) {
 
   if (current_contact_idx == -1 && current_channel_idx == -1) {
     display.setColor(CardputerDisplay::P_ORANGE);
-    display.drawTextCentered(display.width() / 2, 20, "Contact/Channel not selected");
+    display.drawTextCentered(display.width() / 2, UI_PAGE_TOP, "Contact/Channel not selected");
   } else if (current_contact_idx != -1) {
     // out_path_len packs the path hash count in the lower 6 bits, and (hash size - 1) in the upper 2 bits
     uint8_t path_hops = current_contact.out_path_len & 63;
@@ -20,20 +20,21 @@ int ChatPage::render(CardputerDisplay &lcd) {
     } else {
       snprintf(buf, sizeof(buf), "%s %uH", current_contact.name, path_hops);
     }
-    display.drawTextCentered(display.width() / 2, 20, buf);
+    display.drawTextCentered(display.width() / 2, UI_PAGE_TOP, buf);
   } else if (current_channel_idx != -1) {
-    display.drawTextCentered(display.width() / 2, 20, current_channel.name);
+    display.drawTextCentered(display.width() / 2, UI_PAGE_TOP, current_channel.name);
   }
 
   display.setColor(CardputerDisplay::P_GREEN);
 
-  int current_y = 35 + (UI_CHAT_HISTORY_LIST_SIZE - 1) * display.getFontLineHeight();
+  const int history_rows = UI_CHAT_HISTORY_LIST_SIZE;
+  int current_y = UI_CHAT_HISTORY_TOP + (history_rows - 1) * display.getFontLineHeight();
   int total_lines_drawn = 0;
 
   int start_index = (int)chat_history.count() - 1 - chat_history_offset;
 
   for (int i = start_index; i >= 0; i--) {
-    if (total_lines_drawn >= UI_CHAT_HISTORY_LIST_SIZE) {
+    if (total_lines_drawn >= history_rows) {
       break;
     }
 
@@ -46,8 +47,8 @@ int ChatPage::render(CardputerDisplay &lcd) {
     int text_w = display.getTextWidth(msg->text);
     int message_lines = (text_w / display.width()) + 1;
 
-    if (total_lines_drawn + message_lines > UI_CHAT_HISTORY_LIST_SIZE) {
-      message_lines = UI_CHAT_HISTORY_LIST_SIZE - total_lines_drawn;
+    if (total_lines_drawn + message_lines > history_rows) {
+      message_lines = history_rows - total_lines_drawn;
     }
 
     int message_top_y = current_y - ((message_lines - 1) * display.getFontLineHeight());
