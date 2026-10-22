@@ -18,6 +18,7 @@ void CardputerUITask::begin(DisplayDriver *display, SensorManager *sensors, Node
   _custom_prefs = custom_prefs;
 
   if (_display != NULL) {
+    _display->setFontFace(_custom_prefs->font_face);
     _display->setFontSize(_custom_prefs->font_size);
     _display->turnOn();
   }
@@ -273,6 +274,15 @@ void CardputerUITask::applyFontSize(uint8_t idx) {
   if (_display != NULL) {
     _display->setFontSize(idx);
   }
+  scheduleRefresh();
+}
+
+void CardputerUITask::setFontFace(uint8_t face) {
+  _custom_prefs->font_face = face;
+  if (_display != NULL) {
+    _display->setFontFace(face);
+  }
+  the_mesh_cp.savePrefs();
   scheduleRefresh();
 }
 

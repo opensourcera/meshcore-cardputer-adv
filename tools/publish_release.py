@@ -15,6 +15,7 @@ body = """MeshCore companion firmware for the M5Stack Cardputer ADV with Cap LoR
 
 **What is new**
 - Tools > Signal tester: pick a repeater, optionally one to go through, and get five traces with the SNR there and back.
+- Settings > Font: Sans or Mono.
 - Settings > Font size: 12 (original), 14, 16 or 18 px. Live preview while choosing, `Enter` saves, `Esc` reverts.
 - Menus, lists, chat history and the message line follow the selected font.
 - Settings, contacts, channels and chat history stay on the SD card and are kept across updates.
@@ -33,7 +34,7 @@ Based on MultiMote/meshcore-cardputer-adv 2026.10.1 and MeshCore 1.17.1. See the
 
 req = urllib.request.Request('https://api.github.com/repos/%s/releases' % REPO, method='POST',
                              headers=dict(hdr, **{'Content-Type': 'application/json'}),
-                             data=json.dumps({'tag_name': tag, 'name': 'Firmware %s: font size setting and signal tester' % tag,
+                             data=json.dumps({'tag_name': tag, 'name': 'Firmware %s: font size, Sans/Mono, signal tester' % tag,
                                               'body': body, 'draft': False, 'prerelease': False}).encode())
 rel = json.load(urllib.request.urlopen(req))
 print('release:', rel['html_url'])

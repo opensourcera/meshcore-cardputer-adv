@@ -18,6 +18,7 @@ class SettingsScreen : public CardputerScreen {
     DeviceGps,
     DevicePowersave,
     DeviceFontSize,
+    DeviceFontFace,
     DeviceBatteryCorrection,
     HdrMesh,
     MeshPathSize,

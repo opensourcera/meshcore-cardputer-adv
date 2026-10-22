@@ -76,6 +76,10 @@ void SettingsScreen::renderItem(CardputerDisplay &lcd, SettingsItem item, int x,
       snprintf(tmp, sizeof(tmp), "Font size: %d", CardputerDisplay::fontPixels(_custom_prefs->font_size));
       break;
 
+    case SettingsItem::DeviceFontFace:
+      snprintf(tmp, sizeof(tmp), "Font: %s", CardputerDisplay::fontFaceName(_custom_prefs->font_face));
+      break;
+
     case SettingsItem::MeshPathSize:
       snprintf(tmp, sizeof(tmp), "Path hash size: %d", _node_prefs->path_hash_mode + 1);
       break;
@@ -131,6 +135,10 @@ bool SettingsScreen::enterItemEdit(SettingsItem item) {
     case SettingsItem::DeviceFontSize:
       edit_u8 = _custom_prefs->font_size;
       is_editing = true;
+      return true;
+
+    case SettingsItem::DeviceFontFace:
+      _task->setFontFace((_custom_prefs->font_face + 1) % CardputerDisplay::FACE_COUNT);
       return true;
 
     case SettingsItem::RadioSf:

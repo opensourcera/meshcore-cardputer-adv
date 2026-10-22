@@ -65,6 +65,9 @@ public:
   void applyFontSize(uint8_t idx);
   /** Switch the display font and save it */
   void setFontSize(uint8_t idx);
+  /** Switch between Sans and Mono and save it */
+  void setFontFace(uint8_t face);
+  uint8_t getFontFace() const { return _custom_prefs->font_face; }
   bool getGPSState();
   void toggleGPS();
   inline unsigned long getAutoOffTime() const { return auto_off_time; }

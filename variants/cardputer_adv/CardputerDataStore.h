@@ -9,6 +9,7 @@ struct __attribute__((packed)) CustomNodePrefs {
   uint8_t power_save;
   float battery_correction;
   uint8_t font_size; // index into the CardputerDisplay font table
+  uint8_t font_face; // 0 = DejaVu Sans, 1 = DejaVu Sans Mono
 };
 
 struct HistoryMessage {

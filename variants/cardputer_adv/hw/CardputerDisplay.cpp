@@ -4,13 +4,21 @@
 #include "fonts/DejaVuSans_14.h"
 #include "fonts/DejaVuSans_16.h"
 #include "fonts/DejaVuSans_18.h"
+#include "fonts/DejaVuSansMono_12.h"
+#include "fonts/DejaVuSansMono_14.h"
+#include "fonts/DejaVuSansMono_16.h"
+#include "fonts/DejaVuSansMono_18.h"
 #include "globals.h"
 
 #include <MeshCore.h>
 
 ColorVal UIColor::window_bkg = CardputerDisplay::PaletteColor::P_BLACK;
 
-static const uint8_t *const FONTS[CardputerDisplay::FONT_COUNT] = { DejaVuSans_11, DejaVuSans_14, DejaVuSans_16, DejaVuSans_18 };
+static const uint8_t *const FONTS[CardputerDisplay::FACE_COUNT][CardputerDisplay::FONT_COUNT] = {
+  { DejaVuSans_11, DejaVuSans_14, DejaVuSans_16, DejaVuSans_18 },
+  { DejaVuSansMono_12, DejaVuSansMono_14, DejaVuSansMono_16, DejaVuSansMono_18 },
+};
+static const char *const FACE_NAMES[CardputerDisplay::FACE_COUNT] = { "Sans", "Mono" };
 static const uint8_t FONT_PX[CardputerDisplay::FONT_COUNT] = { 12, 14, 16, 18 };
 
 int32_t emoji_draw_callback(lgfx::LGFXBase *gfx, int32_t x, int32_t y, uint32_t code, int32_t font_height) {
@@ -87,7 +95,7 @@ bool CardputerDisplay::begin() {
   LCD.setBrightness(128);
 
   LCD.setTextColor(TFT_WHITE, TFT_BLACK);
-  LCD.loadFont(FONTS[_font_idx]);
+  LCD.loadFont(FONTS[_font_face][_font_idx]);
   LCD.setEmojiCallback(emoji_draw_callback);
 
   updateFontYAdvance();
@@ -103,14 +111,28 @@ bool CardputerDisplay::setFontSize(uint8_t idx) {
     idx = 0;
   }
   _font_idx = idx;
-  LCD.loadFont(FONTS[idx]);
+  LCD.loadFont(FONTS[_font_face][idx]);
+  updateFontYAdvance();
+  return true;
+}
+
+const char *CardputerDisplay::fontFaceName(uint8_t face) {
+  return FACE_NAMES[face < FACE_COUNT ? face : 0];
+}
+
+bool CardputerDisplay::setFontFace(uint8_t face) {
+  if (face >= FACE_COUNT) {
+    face = 0;
+  }
+  _font_face = face;
+  LCD.loadFont(FONTS[_font_face][_font_idx]);
   updateFontYAdvance();
   return true;
 }
 
 int16_t CardputerDisplay::getUiLineHeight() const {
   // the original 12 px font is laid out with a 12 px pitch; larger fonts get one extra pixel of air
-  return _font_idx == 0 ? 12 : FONT_PX[_font_idx] + 1;
+  return (_font_idx == 0 && _font_face == 0) ? 12 : FONT_PX[_font_idx] + 1;
 }
 
 void CardputerDisplay::tryLoadUserFont() {

@@ -1,3 +1,7 @@
+# 2026.10.22.1 (opensourcera fork)
+
+* Settings > Font: Sans or Mono (DejaVu Sans Mono at 12, 14, 16 and 18 px). `Enter` toggles and saves.
+
 # 2026.10.22 (opensourcera fork)
 
 * Tools > Signal tester: pick a repeater (and optionally one to go through), send five traces ten seconds apart

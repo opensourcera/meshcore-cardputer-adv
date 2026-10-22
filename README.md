@@ -17,12 +17,17 @@ device itself, and lets you measure the link to a repeater without a phone or PC
 - `Enter` saves the choice, `Esc` goes back to the previous size.
 - The whole interface follows the font: menus, contact and channel lists, chat history and the message line.
   Bigger text means fewer rows on screen. At 18 px the chat shows two messages plus the input line, at 16 px three.
+- **Font** right below it switches between **Sans** (DejaVu Sans) and **Mono** (DejaVu Sans Mono) with one press
+  of `Enter`. Mono gives every character the same width, which keeps columns and signal readings lined up.
+
+![font faces](images/font_faces_preview.png)
+
 - The setting is stored with the other custom settings on the SD card (`/meshcore_custom/prefs`), so it survives
   firmware updates. A settings file written by the original firmware is read as it is; the font simply starts at 12 px.
 
-All four fonts are DejaVu Sans with the same character set as the original (Latin, Latin-1, Latin Extended-A,
+All fonts are DejaVu Sans or DejaVu Sans Mono with the same character set as the original (Latin, Latin-1, Latin Extended-A,
 Cyrillic, currency symbols, arrows). They are generated from the DejaVu TTF with `tools/make_vlw_font.py` and
-compiled into the firmware, which grows by about 320 KB.
+compiled into the firmware, which grows by about 750 KB for the seven extra fonts.
 
 ### Signal tester
 

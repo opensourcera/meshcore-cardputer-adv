@@ -24,6 +24,7 @@ private:
   uint16_t _lastColor = 0;
   int16_t _fontYAdvance = 1;
   uint8_t _font_idx = 0;
+  uint8_t _font_face = 0;
   LGFX LCD;
 
   void updateFontYAdvance();
@@ -46,6 +47,11 @@ public:
 
   /** Built-in font sizes selectable in Settings */
   static const uint8_t FONT_COUNT = 4;
+  /** Built-in font faces: 0 = Sans, 1 = Mono */
+  static const uint8_t FACE_COUNT = 2;
+  static const char *fontFaceName(uint8_t face);
+  bool setFontFace(uint8_t face);
+  uint8_t getFontFace() const { return _font_face; }
   static uint8_t fontPixels(uint8_t idx);
   bool setFontSize(uint8_t idx);
   uint8_t getFontSize() const { return _font_idx; }
