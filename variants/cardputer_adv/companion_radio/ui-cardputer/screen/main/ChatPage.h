@@ -20,7 +20,10 @@ private:
   int chat_history_offset = 0; // from bottom
 
   void sendChatMessage();
-  void fillHeardReply();
+  int quick_reply_idx = -1;
+  String quick_reply_last;
+  void fillQuickReply();
+  bool buildQuickReply(int idx, String &out);
 
 public:
   ChatPage(MainScreen *parent) : _p(parent) { chat_text_box.reserve(MAX_MESSAGE_LENGTH); };

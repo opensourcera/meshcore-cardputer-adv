@@ -1,7 +1,7 @@
 ## MeshCore Cardputer-Adv + Cap LoRa-1262 variant, with a font size setting and a signal tester
 
 This is a fork of [MultiMote/meshcore-cardputer-adv](https://github.com/MultiMote/meshcore-cardputer-adv)
-that adds a few things: **Settings > Font size** (and Sans/Mono), **Tools > Signal tester** and a **"heard you" reply** key. The original firmware draws
+that adds a few things: **Settings > Font size** (and Sans/Mono), **Tools > Signal tester** and **quick replies** (`Ctrl+Space`). The original firmware draws
 everything in a 12 px font, which is hard to read on the Cardputer's small screen. This fork keeps everything else
 as it is (phone pairing over Bluetooth, SD card history, GPS, keyboard layouts), lets you pick a bigger font on the
 device itself, and lets you measure the link to a repeater without a phone or PC.
@@ -50,17 +50,28 @@ ratio of each one. Handy when you place an antenna or want to know whether a dis
 A reply needs every hop to work in both directions, so "no reply" on a path that you *can* hear means the other
 side does not hear you, or does not relay.
 
-### "Heard you" reply
+### Quick replies
 
-When someone on a channel asks whether they got through, press `Ctrl+Space` in that chat. The message box is filled
-with a reply to the last message heard there, for example:
+`Ctrl+Space` in a chat puts a ready-made reply into the message box. Press it again to cycle through the list,
+edit the text if you like, then `Enter` sends it. `Ctrl+Backspace` clears the box. The built-in list:
 
-```
-@[KJ4HUM] heard you: 2 hops, SNR 7.5 dB, RSSI -98 dBm
-```
+1. `@[name] heard you: 2 hops, SNR 7.5 dB, RSSI -98 dBm` (how the last message in this chat was heard)
+2. `@[name] received, thanks!`
+3. `@[name] loud and clear`
+4. `@[name] copy, weak here but readable`
+5. `Radio check, anyone hear me?`
+6. `Anyone around?`
+7. `Testing from <your node name>`
+8. `Thanks, 73`
+9. `Good morning mesh`
+10. `Good evening mesh`
 
-Edit it if you like, then `Enter` sends it. `Ctrl+Backspace` clears the message box. In a direct chat the reply
-has no name prefix. The hop count is the number of repeaters the message came through; "direct" means none.
+`@[name]` is the sender of the last message received in the open chat, and the hop count is the number of
+repeaters it came through ("direct" means none). In a direct chat the `@[name]` prefix is dropped. Replies that
+quote a received message are skipped until something has been heard in that chat.
+
+To use your own list, put a file `quick_replies.txt` in the `meshcore_custom` folder of the SD card: one reply
+per line, up to 10 lines, with the placeholders `{name}`, `{hops}`, `{snr}`, `{rssi}` and `{me}` (your node name).
 
 Because `Ctrl+Space` is taken in chats, the keyboard layout switch is `Ctrl+L` there (`Ctrl+Space` still works on
 the other pages).
@@ -155,7 +166,7 @@ Currently implemented (companion):
    * After sending direct message, "Message delivered" appears (if ACK received)
    * Retry direct message sending if ACK is not received
    * Press `Ctrl+Up` to insert last sent message into the text field
-   * Press `Ctrl+Space` to fill in a "heard you" reply (hops, SNR, RSSI), `Ctrl+Backspace` to clear the text field
+   * Press `Ctrl+Space` to cycle through quick replies ("heard you" with hops/SNR/RSSI first), `Ctrl+Backspace` to clear the text field
    * Press `Ctrl+T` to break resending
 
 - Chat history

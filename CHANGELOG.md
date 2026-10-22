@@ -1,3 +1,8 @@
+# 2026.10.22.3 (opensourcera fork)
+
+* Chat: `Ctrl+Space` now cycles through ten quick replies, the "heard you" line (hops, SNR, RSSI) first. Your own
+  list goes in `/meshcore_custom/quick_replies.txt` on the SD card.
+
 # 2026.10.22.2 (opensourcera fork)
 
 * Chat: `Ctrl+Space` fills the message box with a "heard you" reply to the last message received in that chat

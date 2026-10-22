@@ -15,7 +15,7 @@ body = """MeshCore companion firmware for the M5Stack Cardputer ADV with Cap LoR
 
 **What is new**
 - Tools > Signal tester: pick a repeater, optionally one to go through, and get five traces with the SNR there and back.
-- Chat: `Ctrl+Space` fills in a "heard you" reply (hops, SNR, RSSI), `Ctrl+Backspace` clears the message box.
+- Chat: `Ctrl+Space` cycles through quick replies, the "heard you" line (hops, SNR, RSSI) first; `Ctrl+Backspace` clears the message box.
 - Settings > Font: Sans or Mono.
 - Settings > Font size: 12 (original), 14, 16 or 18 px. Live preview while choosing, `Enter` saves, `Esc` reverts.
 - Menus, lists, chat history and the message line follow the selected font.
@@ -35,7 +35,7 @@ Based on MultiMote/meshcore-cardputer-adv 2026.10.1 and MeshCore 1.17.1. See the
 
 req = urllib.request.Request('https://api.github.com/repos/%s/releases' % REPO, method='POST',
                              headers=dict(hdr, **{'Content-Type': 'application/json'}),
-                             data=json.dumps({'tag_name': tag, 'name': 'Firmware %s: font size, Sans/Mono, signal tester, heard-you reply' % tag,
+                             data=json.dumps({'tag_name': tag, 'name': 'Firmware %s: font size, Sans/Mono, signal tester, quick replies' % tag,
                                               'body': body, 'draft': False, 'prerelease': False}).encode())
 rel = json.load(urllib.request.urlopen(req))
 print('release:', rel['html_url'])

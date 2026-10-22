@@ -2,6 +2,8 @@
 
 #include "helpers.h"
 
+#include <SD.h>
+
 int ChatPage::render(CardputerDisplay &lcd) {
   char buf[64];
 
@@ -132,33 +134,104 @@ void ChatPage::sendChatMessage() {
   }
 }
 
-// Ctrl+Space: put a reply to the last message heard in this chat into the message box (hops, SNR, RSSI)
-void ChatPage::fillHeardReply() {
-  HeardInfo h;
-  bool found = false;
-  if (current_contact_idx != -1 && current_contact.type == ADV_TYPE_CHAT) {
-    found = the_mesh_cp.getLastHeard(current_contact.id.pub_key, false, h);
-  } else if (current_channel_idx != -1) {
-    found = the_mesh_cp.getLastHeard(current_channel.channel.secret, true, h);
-  }
-  if (!found) {
-    _p->getUiTask()->showAlert("Nothing heard here yet", 2000);
+// ---- Quick replies (Ctrl+Space cycles through them) ----
+// Placeholders: {name} sender of the last message heard here, {hops} / {snr} / {rssi} how it was heard, {me} this node.
+// A file /meshcore_custom/quick_replies.txt on the SD card (one reply per line, up to 10) replaces the list below.
+
+#define QUICK_REPLY_FILE "/meshcore_custom/quick_replies.txt"
+#define QUICK_REPLY_MAX  10
+
+static const char *const DEFAULT_QUICK_REPLIES[] = {
+  "@[{name}] heard you: {hops}, SNR {snr} dB, RSSI {rssi} dBm",
+  "@[{name}] received, thanks!",
+  "@[{name}] loud and clear",
+  "@[{name}] copy, weak here but readable",
+  "Radio check, anyone hear me?",
+  "Anyone around?",
+  "Testing from {me}",
+  "Thanks, 73",
+  "Good morning mesh",
+  "Good evening mesh",
+};
+
+static String quick_replies[QUICK_REPLY_MAX];
+static int quick_reply_count = -1; // -1 = not loaded yet
+
+static void loadQuickReplies() {
+  if (quick_reply_count >= 0) {
     return;
   }
+  quick_reply_count = 0;
+  File f = SD.open(QUICK_REPLY_FILE);
+  if (f) {
+    while (f.available() && quick_reply_count < QUICK_REPLY_MAX) {
+      String line = f.readStringUntil('\n');
+      line.trim();
+      if (line.length() > 0 && line.length() < MAX_MESSAGE_LENGTH) {
+        quick_replies[quick_reply_count++] = line;
+      }
+    }
+    f.close();
+  }
+  if (quick_reply_count == 0) {
+    for (size_t i = 0; i < sizeof(DEFAULT_QUICK_REPLIES) / sizeof(DEFAULT_QUICK_REPLIES[0]) && i < QUICK_REPLY_MAX; i++) {
+      quick_replies[quick_reply_count++] = DEFAULT_QUICK_REPLIES[i];
+    }
+  }
+}
 
-  char hops[24];
-  if (h.hops == 0) {
-    snprintf(hops, sizeof(hops), "direct");
-  } else {
-    snprintf(hops, sizeof(hops), "%d hop%s", h.hops, h.hops == 1 ? "" : "s");
+bool ChatPage::buildQuickReply(int idx, String &out) {
+  String t = quick_replies[idx];
+  bool needs_heard = t.indexOf("{name}") >= 0 || t.indexOf("{hops}") >= 0 || t.indexOf("{snr}") >= 0 ||
+                     t.indexOf("{rssi}") >= 0;
+  HeardInfo h;
+  if (needs_heard) {
+    bool found = false;
+    if (current_contact_idx != -1 && current_contact.type == ADV_TYPE_CHAT) {
+      found = the_mesh_cp.getLastHeard(current_contact.id.pub_key, false, h);
+      if (found) {
+        t.replace("@[{name}] ", ""); // no name prefix in a direct chat
+      }
+    } else if (current_channel_idx != -1) {
+      found = the_mesh_cp.getLastHeard(current_channel.channel.secret, true, h);
+    }
+    if (!found) {
+      return false; // nothing heard here yet: skip replies that quote it
+    }
+    char num[24];
+    if (h.hops == 0) {
+      snprintf(num, sizeof(num), "direct");
+    } else {
+      snprintf(num, sizeof(num), "%d hop%s", h.hops, h.hops == 1 ? "" : "s");
+    }
+    t.replace("{hops}", num);
+    snprintf(num, sizeof(num), "%.1f", h.snr);
+    t.replace("{snr}", num);
+    snprintf(num, sizeof(num), "%.0f", h.rssi);
+    t.replace("{rssi}", num);
+    t.replace("{name}", h.sender);
   }
-  char buf[MAX_MESSAGE_LENGTH];
-  if (h.is_channel) {
-    snprintf(buf, sizeof(buf), "@[%s] heard you: %s, SNR %.1f dB, RSSI %.0f dBm", h.sender, hops, h.snr, h.rssi);
-  } else {
-    snprintf(buf, sizeof(buf), "heard you: %s, SNR %.1f dB, RSSI %.0f dBm", hops, h.snr, h.rssi);
+  t.replace("{me}", _p->getUiTask()->getNodeName());
+  out = t;
+  return true;
+}
+
+// Ctrl+Space: put the next quick reply into the message box. Typing something else restarts from the first one.
+void ChatPage::fillQuickReply() {
+  loadQuickReplies();
+  if (chat_text_box.isEmpty() || chat_text_box != quick_reply_last) {
+    quick_reply_idx = -1;
   }
-  chat_text_box = buf;
+  for (int n = 0; n < quick_reply_count; n++) {
+    quick_reply_idx = (quick_reply_idx + 1) % quick_reply_count;
+    String s;
+    if (buildQuickReply(quick_reply_idx, s)) {
+      chat_text_box = s;
+      quick_reply_last = s;
+      return;
+    }
+  }
+  _p->getUiTask()->showAlert("No quick reply fits here", 2000);
 }
 
 bool ChatPage::handleInput(Keyboard::Event &e) {
@@ -174,7 +247,7 @@ bool ChatPage::handleInput(Keyboard::Event &e) {
   }
 
   if (e.modifiers.ctrl && e.key == Keyboard::KEY_SPACE) {
-    fillHeardReply();
+    fillQuickReply();
     return true;
   }
 
