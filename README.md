@@ -1,9 +1,10 @@
-## MeshCore Cardputer-Adv + Cap LoRa-1262 variant, with a font size setting
+## MeshCore Cardputer-Adv + Cap LoRa-1262 variant, with a font size setting and a signal tester
 
 This is a fork of [MultiMote/meshcore-cardputer-adv](https://github.com/MultiMote/meshcore-cardputer-adv)
-that adds one thing: **Settings > Font size**. The original firmware draws everything in a 12 px font, which is
-hard to read on the Cardputer's small screen. This fork keeps everything else as it is (phone pairing over
-Bluetooth, SD card history, GPS, keyboard layouts) and lets you pick a bigger font on the device itself.
+that adds two things: **Settings > Font size** and **Tools > Signal tester**. The original firmware draws
+everything in a 12 px font, which is hard to read on the Cardputer's small screen. This fork keeps everything else
+as it is (phone pairing over Bluetooth, SD card history, GPS, keyboard layouts), lets you pick a bigger font on the
+device itself, and lets you measure the link to a repeater without a phone or PC.
 
 ![font sizes](images/font_sizes_preview.png)
 
@@ -22,6 +23,27 @@ Bluetooth, SD card history, GPS, keyboard layouts) and lets you pick a bigger fo
 All four fonts are DejaVu Sans with the same character set as the original (Latin, Latin-1, Latin Extended-A,
 Cyrillic, currency symbols, arrows). They are generated from the DejaVu TTF with `tools/make_vlw_font.py` and
 compiled into the firmware, which grows by about 320 KB.
+
+### Signal tester
+
+Tests the radio link to a repeater, straight from the device: five traces, ten seconds apart, with the signal-to-noise
+ratio of each one. Handy when you place an antenna or want to know whether a distant repeater hears you.
+
+![signal tester](images/signal_tester_preview.png)
+
+*Rendered preview of the result page (a drawing, not a photo of the device).*
+
+- Press `OPT` twice (or open the Tools screen), pick **Signal tester** and press `Enter`.
+- Choose the repeater to test from your contacts.
+- Choose **(direct, no repeater)** to test it over one hop, or pick another repeater to go through first. Testing a
+  distant repeater *via* your own repeater tells you whether the two of them hear each other.
+- Each line shows one try: the SNR heard **there** (at the tested repeater) and on the way **back** (at the repeater
+  you went through, or at the device for a direct test). Green when both are positive, orange when a hop is below
+  zero, red when nothing came back within ten seconds.
+- The last line counts the replies. `Esc` stops a running test, `Enter` runs it again.
+
+A reply needs every hop to work in both directions, so "no reply" on a path that you *can* hear means the other
+side does not hear you, or does not relay.
 
 ### Installing this fork
 

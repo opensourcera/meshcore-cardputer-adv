@@ -78,6 +78,7 @@ public:
 
   void pingRecv(float snr_tx, float snr_rx);
   void discoverRecv(const mesh::Identity &id, float snr);
+  void signalTraceRecv(uint32_t tag, const uint8_t *snrs, uint8_t count, float final_snr);
   void messageRepeatsRecv(uint16_t count);
   void notify(UIEventType t = UIEventType::none) override;
   void playSound(SoundType t);

@@ -129,6 +129,12 @@ void CardputerUITask::discoverRecv(const mesh::Identity &id, float snr) {
   }
 }
 
+void CardputerUITask::signalTraceRecv(uint32_t tag, const uint8_t *snrs, uint8_t count, float final_snr) {
+  if (current_screen == tools_screen) {
+    static_cast<ToolsScreen *>(tools_screen)->signalTraceRecv(tag, snrs, count, final_snr);
+  }
+}
+
 void CardputerUITask::messageRepeatsRecv(uint16_t count) {
   if (current_screen == main_screen) {
     static_cast<MainScreen *>(main_screen)->messageRepeatsRecv(count);

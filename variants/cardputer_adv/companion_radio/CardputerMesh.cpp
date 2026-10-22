@@ -8,6 +8,11 @@ void CardputerMesh::onTraceRecv(mesh::Packet *packet, uint32_t tag, uint32_t aut
     int8_t snr_signed = (int8_t)path_snrs[0];
     _ui->pingRecv(snr_signed / 4.0f, packet->getSNR());
   }
+
+  if (tag == last_signal_tag) {
+    uint8_t path_sz = flags & 0x03;
+    _ui->signalTraceRecv(tag, path_snrs, path_len >> path_sz, packet->getSNR());
+  }
 }
 
 void CardputerMesh::onControlDataRecv(mesh::Packet *packet) {
@@ -158,6 +163,32 @@ bool CardputerMesh::sendPing(ContactInfo &contact) {
   }
 
   sendDirect(pkt, contact.id.pub_key, prefs->path_hash_mode + 1);
+  return true;
+}
+
+bool CardputerMesh::sendSignalTrace(const ContactInfo *via, const ContactInfo &target, uint32_t &tag) {
+  NodePrefs *prefs = getNodePrefs();
+  uint8_t flags = prefs->path_hash_mode & 0x03;
+  uint8_t hop_bytes = prefs->path_hash_mode + 1;
+  uint8_t path[2 * MAX_HASH_SIZE];
+  uint8_t path_len = 0;
+
+  if (via) {
+    memcpy(&path[path_len], via->id.pub_key, hop_bytes);
+    path_len += hop_bytes;
+  }
+  memcpy(&path[path_len], target.id.pub_key, hop_bytes);
+  path_len += hop_bytes;
+
+  getRNG()->random((uint8_t *)&tag, sizeof(tag));
+
+  mesh::Packet *pkt = createTrace(tag, 0, flags);
+  if (!pkt) {
+    return false;
+  }
+
+  last_signal_tag = tag;
+  sendDirect(pkt, path, path_len);
   return true;
 }
 

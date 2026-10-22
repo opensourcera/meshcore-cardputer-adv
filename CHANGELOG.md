@@ -1,3 +1,9 @@
+# 2026.10.22 (opensourcera fork)
+
+* Tools > Signal tester: pick a repeater (and optionally one to go through), send five traces ten seconds apart
+  and see the SNR there and back for each, plus a reply count. `Esc` stops, `Enter` repeats.
+* Tools menu and the repeater lists now ellipsize long names and page with the selected font.
+
 # 2026.10.21 (opensourcera fork)
 
 * Settings > Font size: 12 (original), 14, 16 or 18 px. Live preview while choosing, `Enter` saves, `Esc` reverts.

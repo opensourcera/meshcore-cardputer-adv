@@ -15,6 +15,7 @@ class CardputerMesh : public MyMesh {
   uint64_t rx_packet_count = 0;
   uint32_t last_ping_tag = 0;
   uint32_t last_discover_tag = 0;
+  uint32_t last_signal_tag = 0;
   uint8_t last_message_hash[MAX_HASH_SIZE] = { 0 };
   uint16_t last_message_heard_repeats = 0;
   CustomNodePrefs _custom_prefs{ .power_save = 0, .battery_correction = 1.0f, .font_size = 0 };
@@ -55,6 +56,8 @@ public:
   bool sendPing(ContactInfo &contact);
   bool sendAdvert(bool flood);
   bool sendRepeatersDiscover();
+  /** Signal tester: trace to target, optionally through via. Returns the tag used. */
+  bool sendSignalTrace(const ContactInfo *via, const ContactInfo &target, uint32_t &tag);
   uint32_t getLastPingTag() const { return last_ping_tag; }
   inline CustomNodePrefs *getCustomNodePrefs() { return &_custom_prefs; }
   void loadMessageHistory(const uint8_t pkey[PUB_KEY_SIZE], bool is_channel, ChatHistory &history);
