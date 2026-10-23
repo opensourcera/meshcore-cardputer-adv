@@ -14,7 +14,7 @@ hdr = {'Authorization': 'token ' + token, 'Accept': 'application/vnd.github+json
 body = """MeshCore companion firmware for the M5Stack Cardputer ADV with Cap LoRa-1262, with a **Font size** setting.
 
 **What is new**
-- Tools > Signal tester: pick a repeater, optionally one to go through, and get five traces with the SNR there and back.
+- Tools > Signal tester: pick a repeater, optionally one to go through, and get five traces with the SNR there and back (2-byte path hashes, answer routed back through the chosen repeater).
 - Chat: `Ctrl+Space` cycles through quick replies, the "heard you" line (hops, SNR, RSSI) first; `Ctrl+Backspace` clears the message box.
 - Settings > Font: Sans or Mono.
 - Settings > Font size: 12 (original), 14, 16 or 18 px. Live preview while choosing, `Enter` saves, `Esc` reverts.

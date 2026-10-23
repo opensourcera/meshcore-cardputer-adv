@@ -199,10 +199,12 @@ bool CardputerMesh::sendPing(ContactInfo &contact) {
 }
 
 bool CardputerMesh::sendSignalTrace(const ContactInfo *via, const ContactInfo &target, uint32_t &tag) {
-  NodePrefs *prefs = getNodePrefs();
-  uint8_t flags = prefs->path_hash_mode & 0x03;
-  uint8_t hop_bytes = prefs->path_hash_mode + 1;
-  uint8_t path[2 * MAX_HASH_SIZE];
+  // Always 2-byte path hashes: repeaters in 2-byte regions ignore 1-byte traces.
+  // Through a repeater the path is via -> target -> via, so the answer comes back through the
+  // same repeater instead of relying on a weak direct return leg.
+  const uint8_t flags = 1;
+  const uint8_t hop_bytes = 2;
+  uint8_t path[3 * MAX_HASH_SIZE];
   uint8_t path_len = 0;
 
   if (via) {
@@ -211,6 +213,10 @@ bool CardputerMesh::sendSignalTrace(const ContactInfo *via, const ContactInfo &t
   }
   memcpy(&path[path_len], target.id.pub_key, hop_bytes);
   path_len += hop_bytes;
+  if (via) {
+    memcpy(&path[path_len], via->id.pub_key, hop_bytes);
+    path_len += hop_bytes;
+  }
 
   getRNG()->random((uint8_t *)&tag, sizeof(tag));
 

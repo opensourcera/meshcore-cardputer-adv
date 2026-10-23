@@ -41,7 +41,9 @@ ratio of each one. Handy when you place an antenna or want to know whether a dis
 - Press `OPT` twice (or open the Tools screen), pick **Signal tester** and press `Enter`.
 - Choose the repeater to test from your contacts.
 - Choose **(direct, no repeater)** to test it over one hop, or pick another repeater to go through first. Testing a
-  distant repeater *via* your own repeater tells you whether the two of them hear each other.
+  distant repeater *via* your own repeater tells you whether the two of them hear each other. The answer is routed
+  back through that same repeater, so a weak direct path into your house does not spoil the result.
+- Traces always use 2-byte path hashes. Many repeaters ignore 1-byte traces, which makes a working link look dead.
 - Each line shows one try: the SNR heard **there** (at the tested repeater) and on the way **back** (at the repeater
   you went through, or at the device for a direct test). Green when both are positive, orange when a hop is below
   zero, red when nothing came back within ten seconds.

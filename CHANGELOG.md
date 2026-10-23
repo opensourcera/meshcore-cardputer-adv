@@ -1,3 +1,8 @@
+# 2026.10.22.4 (opensourcera fork)
+
+* Signal tester: traces always use 2-byte path hashes (repeaters in 2-byte regions ignore 1-byte traces), and when a
+  repeater is chosen to go through, the answer comes back through it as well instead of over a weak direct path.
+
 # 2026.10.22.3 (opensourcera fork)
 
 * Chat: `Ctrl+Space` now cycles through ten quick replies, the "heard you" line (hops, SNR, RSSI) first. Your own
